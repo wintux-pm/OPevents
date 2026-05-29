@@ -14,23 +14,37 @@ const categoryColors = {
   twoontwoBattle: '#f97316',
 }
 
-const iconCache = {}
-
-function getIcon(category) {
-  if (iconCache[category]) return iconCache[category]
-  const color = categoryColors[category] || '#e63946'
-  const icon = L.divIcon({
-    html: `<div style="background:${color};width:14px;height:14px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>`,
-    className: '',
-    iconSize: [19, 19],
-    iconAnchor: [9, 9],
-  })
-  iconCache[category] = icon
-  return icon
-}
+const DEFAULT_COLOR = '#e63946'
 
 function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+function storeLabelHtml(name, count, color, showClose) {
+  const truncated = name.length > 20 ? name.slice(0, 20) + '…' : name
+  const closeBtn = showClose
+    ? `<span class="store-cluster-close" data-clear-store="1">✕</span>`
+    : ''
+  return `<div class="store-cluster" style="background:${color}"><span class="store-cluster-name">${escapeHtml(truncated)}</span><span class="store-cluster-count">${count}</span>${closeBtn}</div>`
+}
+
+const storeMarkerCache = {}
+
+function getStoreMarkerIcon(event, filteredStore) {
+  const storeName = event.store.name
+  const color = categoryColors[event.category] || DEFAULT_COLOR
+  const showClose = filteredStore === storeName
+  const cacheKey = `${storeName}__${color}__${showClose ? 1 : 0}`
+  if (storeMarkerCache[cacheKey]) return storeMarkerCache[cacheKey]
+
+  const icon = L.divIcon({
+    html: storeLabelHtml(storeName, 1, color, showClose),
+    className: 'store-cluster-icon',
+    iconSize: L.point(40, 40),
+    iconAnchor: L.point(20, 20),
+  })
+  storeMarkerCache[cacheKey] = icon
+  return icon
 }
 
 function makeClusterIconFactory(filteredStore) {
@@ -41,13 +55,15 @@ function makeClusterIconFactory(filteredStore) {
     const allSameStore = firstName && markers.every((m) => m.options.alt === firstName)
 
     if (allSameStore) {
-      const name = firstName.length > 20 ? firstName.slice(0, 20) + '…' : firstName
+      const firstCategory = markers[0]?.options.category
+      const allSameCategory =
+        firstCategory && markers.every((m) => m.options.category === firstCategory)
+      const color = allSameCategory
+        ? categoryColors[firstCategory] || DEFAULT_COLOR
+        : DEFAULT_COLOR
       const showClose = filteredStore === firstName
-      const closeBtn = showClose
-        ? `<span class="store-cluster-close" data-clear-store="1">✕</span>`
-        : ''
       return L.divIcon({
-        html: `<div class="store-cluster"><span class="store-cluster-name">${escapeHtml(name)}</span><span class="store-cluster-count">${count}</span>${closeBtn}</div>`,
+        html: storeLabelHtml(firstName, count, color, showClose),
         className: 'store-cluster-icon',
         iconSize: L.point(40, 40),
         iconAnchor: L.point(20, 20),
@@ -130,6 +146,7 @@ export default function EventMap({ events, onSelectEvent, storeName, onClearStor
           chunkedLoading
           maxClusterRadius={50}
           spiderfyOnMaxZoom
+          spiderfyDistanceMultiplier={2.5}
           showCoverageOnHover={false}
           iconCreateFunction={clusterIconFn}
         >
@@ -137,8 +154,9 @@ export default function EventMap({ events, onSelectEvent, storeName, onClearStor
             <Marker
               key={event.id}
               position={[event.lat, event.lng]}
-              icon={getIcon(event.category)}
+              icon={getStoreMarkerIcon(event, storeName)}
               alt={event.store.name}
+              category={event.category}
               eventHandlers={{ click: () => onSelectEvent(event) }}
             />
           ))}
