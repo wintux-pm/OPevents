@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import { formatEventDate, formatEventTime } from '../utils/date'
 
@@ -14,7 +15,7 @@ const categoryConfig = {
 
 const countryFlags = { ES: '🇪🇸', DE: '🇩🇪' }
 
-export default function EventCard({ event, onClick, isSelected }) {
+function EventCard({ event, onClick, isSelected }) {
   const { t, lang } = useI18n()
   const cat = categoryConfig[event.category] || categoryConfig.storeTournament
 
@@ -96,3 +97,5 @@ export default function EventCard({ event, onClick, isSelected }) {
     </button>
   )
 }
+
+export default memo(EventCard)

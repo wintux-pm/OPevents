@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, lazy, Suspense } from 'react'
+import { useState, useCallback, useMemo, useDeferredValue, lazy, Suspense } from 'react'
 import Header from './components/Header'
 import SearchBar from './components/SearchBar'
 import Filters from './components/Filters'
@@ -38,7 +38,14 @@ export default function App() {
     setFilters((prev) => ({ ...prev, storeName: event.store.name }))
   }, [])
 
+  const handleClearStore = useCallback(() => {
+    setFilters((prev) => ({ ...prev, storeName: '' }))
+  }, [])
+
   const filteredEvents = useFilteredEvents(events, filters)
+  // The map is the heaviest consumer (thousands of markers); render it at a lower
+  // priority so it never blocks the list or interactions while filters change.
+  const deferredEvents = useDeferredValue(filteredEvents)
 
   const filteredCities = useMemo(() => {
     if (!filters.country) return cities
@@ -70,6 +77,11 @@ export default function App() {
     setShowLanding(false)
   }, [])
 
+  const handleGoHome = useCallback(() => {
+    setSelectedEvent(null)
+    setShowLanding(true)
+  }, [])
+
   if (loading) return <LoadingScreen />
 
   if (showLanding) {
@@ -78,7 +90,7 @@ export default function App() {
 
   return (
     <div className="h-screen flex flex-col bg-white overflow-hidden">
-      <Header />
+      <Header onHome={handleGoHome} />
 
       {/* Search & Filters */}
       <div className="border-b border-slate-200 bg-white shrink-0 z-20">
@@ -127,10 +139,10 @@ export default function App() {
             }
           >
             <EventMap
-              events={filteredEvents}
+              events={deferredEvents}
               onSelectEvent={handleMapStoreClick}
               storeName={filters.storeName}
-              onClearStore={() => updateFilters({ storeName: '' })}
+              onClearStore={handleClearStore}
             />
           </Suspense>
         </div>

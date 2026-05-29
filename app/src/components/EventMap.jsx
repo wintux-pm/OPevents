@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useRef } from 'react'
+import { memo, useMemo, useEffect, useCallback, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
@@ -97,7 +97,7 @@ function MapBounds({ events }) {
   return null
 }
 
-export default function EventMap({ events, onSelectEvent, storeName, onClearStore }) {
+function EventMap({ events, onSelectEvent, storeName, onClearStore }) {
   const wrapperRef = useRef(null)
   const geoEvents = useMemo(
     () => events.filter((e) => e.lat && e.lng),
@@ -165,3 +165,5 @@ export default function EventMap({ events, onSelectEvent, storeName, onClearStor
     </div>
   )
 }
+
+export default memo(EventMap)

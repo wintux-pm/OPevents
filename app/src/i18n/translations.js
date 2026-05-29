@@ -81,6 +81,7 @@ export const translations = {
     enterApp: 'Ver eventos',
     exploreAll: 'Explorar todo',
     or: 'o',
+    home: 'Inicio',
   },
   en: {
     title: 'OP Events',
@@ -164,5 +165,6 @@ export const translations = {
     enterApp: 'View events',
     exploreAll: 'Explore all',
     or: 'or',
+    home: 'Home',
   },
 }
