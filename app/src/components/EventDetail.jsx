@@ -83,11 +83,9 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
 
   const cat = categoryConfig[event.category] || categoryConfig.storeTournament
 
-  const bounty = !event.hasFee
+  const bounty = !event.hasFee || event.isFree
     ? t('priceNA')
-    : event.isFree
-      ? t('free')
-      : `${event.fee.toFixed(0)}${event.feeCurrency === 'EUR' ? '€' : event.feeCurrency}`
+    : `${event.fee.toFixed(0)}${event.feeCurrency === 'EUR' ? '€' : event.feeCurrency}`
 
   return (
     <>
