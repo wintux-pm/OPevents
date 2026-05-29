@@ -1,27 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useI18n } from '../i18n/I18nContext'
-
-function StrawHat({ className = '' }) {
-  return (
-    <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
-      {/* brim */}
-      <ellipse cx="60" cy="82" rx="55" ry="17" fill="#c9882a" />
-      <ellipse cx="60" cy="78" rx="55" ry="17" fill="#f0c14b" />
-      <ellipse cx="60" cy="78" rx="55" ry="17" fill="none" stroke="#9c6b1f" strokeWidth="1.5" />
-      {/* straw texture on brim */}
-      <g stroke="#cf9a32" strokeWidth="1" opacity="0.7">
-        <path d="M14 76 Q60 86 106 76" fill="none" />
-        <path d="M20 70 Q60 80 100 70" fill="none" />
-      </g>
-      {/* crown */}
-      <path d="M33 78 C31 42 43 28 60 28 C77 28 89 42 87 78 Z" fill="#f0c14b" stroke="#9c6b1f" strokeWidth="1.5" />
-      <path d="M60 28 C77 28 89 42 87 78 L70 78 C72 46 67 32 60 28 Z" fill="#d9a536" opacity="0.55" />
-      {/* red band */}
-      <path d="M33 70 C45 79 75 79 87 70 L87 60 C75 69 45 69 33 60 Z" fill="#c81e2c" />
-      <path d="M33 70 C45 79 75 79 87 70 L87 67 C75 76 45 76 33 67 Z" fill="#9c1420" opacity="0.6" />
-    </svg>
-  )
-}
+import StrawHat from './StrawHat'
 
 function WaveLayer({ className = '', fill, speedClass }) {
   const path =
@@ -68,13 +47,45 @@ export default function LandingPage({ events, cities, categories, onEnter }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#071124] via-[#0b1e3f] to-[#06243f] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a1a3a] via-[#0d2b54] to-[#072036] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Warm horizon glow (dawn over the sea) */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(120% 75% at 50% 118%, rgba(241,196,15,0.30) 0%, rgba(230,57,70,0.12) 32%, rgba(7,32,54,0) 60%)',
+        }}
+      />
+
+      {/* Nautical chart grid */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)',
+          backgroundSize: '46px 46px',
+          maskImage:
+            'radial-gradient(ellipse 75% 70% at 50% 45%, #000 35%, transparent 90%)',
+          WebkitMaskImage:
+            'radial-gradient(ellipse 75% 70% at 50% 45%, #000 35%, transparent 90%)',
+        }}
+      />
+
       {/* Atmospheric glows */}
-      <div className="absolute inset-0 opacity-25 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-op-red rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-op-gold/60 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-blue-500 rounded-full blur-3xl" />
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
+        <div className="absolute top-[18%] left-1/4 w-96 h-96 bg-op-red rounded-full blur-3xl" />
+        <div className="absolute -bottom-10 right-1/4 w-[28rem] h-[28rem] bg-op-gold/50 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-500/70 rounded-full blur-3xl" />
       </div>
+
+      {/* Edge vignette for focus & depth */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 65% at 50% 42%, transparent 55%, rgba(3,12,26,0.65) 100%)',
+        }}
+      />
 
       {/* Compass rose watermark */}
       <svg

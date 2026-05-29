@@ -82,6 +82,8 @@ export const translations = {
     exploreAll: 'Explorar todo',
     or: 'o',
     home: 'Inicio',
+    filterByStore: 'Ver eventos de esta tienda',
+    clearStoreFilter: 'Quitar filtro de tienda',
   },
   en: {
     title: 'OP Events',
@@ -166,5 +168,7 @@ export const translations = {
     exploreAll: 'Explore all',
     or: 'or',
     home: 'Home',
+    filterByStore: "View this store's events",
+    clearStoreFilter: 'Clear store filter',
   },
 }

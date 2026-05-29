@@ -33,13 +33,16 @@ export default function App() {
     setFilters((prev) => ({ ...prev, ...patch }))
   }, [])
 
-  const handleMapStoreClick = useCallback((event) => {
-    setSelectedEvent(event)
-    setFilters((prev) => ({ ...prev, storeName: event.store.name }))
-  }, [])
-
   const handleClearStore = useCallback(() => {
     setFilters((prev) => ({ ...prev, storeName: '' }))
+  }, [])
+
+  const handleFilterByStore = useCallback((storeName) => {
+    setFilters((prev) => ({
+      ...prev,
+      storeName: prev.storeName === storeName ? '' : storeName,
+    }))
+    setSelectedEvent(null)
   }, [])
 
   const filteredEvents = useFilteredEvents(events, filters)
@@ -140,7 +143,7 @@ export default function App() {
           >
             <EventMap
               events={deferredEvents}
-              onSelectEvent={handleMapStoreClick}
+              onSelectEvent={setSelectedEvent}
               storeName={filters.storeName}
               onClearStore={handleClearStore}
             />
@@ -199,6 +202,8 @@ export default function App() {
         <EventDetail
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          onFilterStore={handleFilterByStore}
+          isStoreFiltered={filters.storeName === selectedEvent.store.name}
         />
       )}
     </div>

@@ -72,7 +72,7 @@ function InfoRow({ icon, label, value, href }) {
   )
 }
 
-export default function EventDetail({ event, onClose }) {
+export default function EventDetail({ event, onClose, onFilterStore, isStoreFiltered }) {
   const { t, lang } = useI18n()
 
   useEffect(() => {
@@ -234,7 +234,22 @@ export default function EventDetail({ event, onClose }) {
           </div>
 
           {/* CTA */}
-          <div className="p-4 border-t border-slate-100 bg-white shrink-0">
+          <div className="p-4 border-t border-slate-100 bg-white shrink-0 space-y-2.5">
+            {onFilterStore && (
+              <button
+                onClick={() => onFilterStore(event.store.name)}
+                className={`flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-semibold text-sm border transition-colors ${
+                  isStoreFiltered
+                    ? 'border-slate-200 text-slate-500 hover:bg-slate-50'
+                    : 'border-op-red/30 text-op-red hover:bg-op-red/5'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M6 12h12m-9 5.25h6" />
+                </svg>
+                {isStoreFiltered ? t('clearStoreFilter') : t('filterByStore')}
+              </button>
+            )}
             <a
               href={event.url}
               target="_blank"

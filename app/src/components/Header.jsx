@@ -1,27 +1,32 @@
 import { useI18n } from '../i18n/I18nContext'
+import StrawHat from './StrawHat'
 
 export default function Header({ onHome }) {
   const { t, lang, toggleLang } = useI18n()
 
   return (
-    <header className="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between shrink-0">
+    <header className="relative bg-gradient-to-r from-[#0a1a3a] via-[#0d2b54] to-[#0a1a3a] border-b border-op-gold/30 px-4 py-2 flex items-center justify-between shrink-0 shadow-md">
+      {/* gold hairline accent */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-op-gold/60 to-transparent" />
+
       <button
         onClick={onHome}
-        className="flex items-center gap-2.5 rounded-lg -mx-1 px-1 py-0.5 hover:bg-slate-50 transition-colors"
+        className="group flex items-center gap-2.5 rounded-lg -mx-1 px-1 py-0.5 hover:bg-white/5 transition-colors"
         aria-label={t('home')}
       >
-        <div className="w-8 h-8 bg-op-red rounded-lg flex items-center justify-center text-white font-extrabold text-[11px] shadow-sm">
-          OP
+        <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-op-red to-op-red-dark border-2 border-op-gold flex items-center justify-center shadow-[0_0_12px_rgba(241,196,15,0.35)]">
+          <StrawHat className="w-6 h-6" />
         </div>
         <div className="text-left">
-          <h1 className="text-[15px] font-bold text-slate-900 leading-tight">{t('title')}</h1>
-          <p className="text-[10px] text-slate-400 leading-tight hidden sm:block">{t('subtitle')}</p>
+          <h1 className="text-[15px] font-extrabold text-white leading-tight tracking-tight">{t('title')}</h1>
+          <p className="text-[10px] text-op-gold/70 leading-tight hidden sm:block">{t('subtitle')}</p>
         </div>
       </button>
+
       <div className="flex items-center gap-2">
         <button
           onClick={onHome}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-slate-200 hover:border-op-red/40 hover:bg-op-red/5 hover:text-op-red text-slate-600 transition-all text-sm"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-white/15 text-white/80 hover:border-op-gold/50 hover:text-op-gold hover:bg-white/5 transition-all text-sm"
           aria-label={t('home')}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -31,11 +36,11 @@ export default function Header({ onHome }) {
         </button>
         <button
           onClick={toggleLang}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all text-sm"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-white/15 hover:border-op-gold/50 hover:bg-white/5 transition-all text-sm"
           aria-label={t('language')}
         >
           <span className="text-sm">{lang === 'es' ? '🇪🇸' : '🇬🇧'}</span>
-          <span className="uppercase text-[11px] font-medium text-slate-600">{lang}</span>
+          <span className="uppercase text-[11px] font-medium text-white/70">{lang}</span>
         </button>
       </div>
     </header>
