@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import { formatFullDate, formatEventTime } from '../utils/date'
 import { countryFlag, countryName } from '../utils/country'
@@ -70,14 +70,50 @@ function InfoRow({ icon, label, value, href }) {
 
 export default function EventDetail({ event, onClose, onFilterStore, isStoreFiltered }) {
   const { t, lang } = useI18n()
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  })
+
+  const [dragY, setDragY] = useState(0)
+  const [dragging, setDragging] = useState(false)
+  const dragStart = useRef(null)
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') onCloseRef.current()
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [onClose])
+  }, [])
+
+  // Lock background scroll while the sheet is open.
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [])
+
+  const handleTouchStart = (e) => {
+    dragStart.current = e.touches[0].clientY
+    setDragging(true)
+  }
+  const handleTouchMove = (e) => {
+    if (dragStart.current == null) return
+    const delta = e.touches[0].clientY - dragStart.current
+    setDragY(delta > 0 ? delta : 0)
+  }
+  const handleTouchEnd = () => {
+    setDragging(false)
+    if (dragY > 110) {
+      onCloseRef.current()
+    } else {
+      setDragY(0)
+    }
+    dragStart.current = null
+  }
 
   if (!event) return null
 
@@ -95,15 +131,37 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
       />
 
       <div className="fixed z-50 inset-0 flex items-end lg:items-center justify-center p-0 lg:p-6 animate-fade-in" onClick={onClose}>
-        <div className="relative op-poster rounded-t-2xl lg:rounded-2xl !shadow-2xl overflow-hidden flex flex-col max-h-[92vh] lg:max-h-[85vh] w-full lg:w-[460px]" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="relative op-poster rounded-t-2xl lg:rounded-2xl !shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] lg:max-h-[85dvh] w-full lg:w-[460px]"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            transform: dragY ? `translateY(${dragY}px)` : undefined,
+            transition: dragging ? 'none' : 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
           {/* Corner brackets */}
           <span className="pointer-events-none absolute top-2.5 left-2.5 w-5 h-5 border-t-2 border-l-2 border-op-bronze/60 z-10" />
           <span className="pointer-events-none absolute top-2.5 right-2.5 w-5 h-5 border-t-2 border-r-2 border-op-bronze/60 z-10" />
           <span className="pointer-events-none absolute bottom-2.5 left-2.5 w-5 h-5 border-b-2 border-l-2 border-op-bronze/60 z-10" />
           <span className="pointer-events-none absolute bottom-2.5 right-2.5 w-5 h-5 border-b-2 border-r-2 border-op-bronze/60 z-10" />
 
+          {/* Mobile grab handle (drag to dismiss) */}
+          <div
+            className="lg:hidden flex justify-center pt-2 pb-1 shrink-0 touch-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="w-10 h-1.5 rounded-full bg-op-bronze/50" />
+          </div>
+
           {/* Wanted-poster header */}
-          <div className="relative px-6 pt-4 pb-4 text-center shrink-0">
+          <div
+            className="relative px-6 pt-2 lg:pt-4 pb-4 text-center shrink-0"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <button
               onClick={onClose}
               className="absolute top-3 right-3 w-8 h-8 rounded-full bg-op-parchment-dark/70 hover:bg-op-parchment-dark border border-op-bronze/40 flex items-center justify-center transition-colors text-op-ink z-20"
@@ -274,7 +332,10 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
           </div>
 
           {/* CTA */}
-          <div className="p-4 border-t-2 border-op-bronze/30 bg-op-parchment-light shrink-0 space-y-2.5">
+          <div
+            className="p-4 border-t-2 border-op-bronze/30 bg-op-parchment-light shrink-0 space-y-2.5"
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)' }}
+          >
             <p className="text-center text-[9px] font-bold uppercase tracking-[0.3em] text-op-bronze/80 pb-0.5">
               ⚓ Marine · World Government ⚓
             </p>

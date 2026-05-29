@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useDeferredValue, lazy, Suspense } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect, useDeferredValue, lazy, Suspense } from 'react'
 import Header from './components/Header'
 import SearchBar from './components/SearchBar'
 import Filters from './components/Filters'
@@ -28,10 +28,16 @@ export default function App() {
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [mobileView, setMobileView] = useState('list')
   const [showLanding, setShowLanding] = useState(true)
+  const listRef = useRef(null)
 
   const updateFilters = useCallback((patch) => {
     setFilters((prev) => ({ ...prev, ...patch }))
   }, [])
+
+  // Scroll the results back to the top whenever the active filters change.
+  useEffect(() => {
+    if (listRef.current) listRef.current.scrollTop = 0
+  }, [filters])
 
   const handleClearStore = useCallback(() => {
     setFilters((prev) => ({ ...prev, storeName: '' }))
@@ -92,7 +98,7 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col op-paper overflow-hidden">
+    <div className="h-dvh flex flex-col op-paper overflow-hidden">
       <Header onHome={handleGoHome} />
 
       {/* Search & Filters */}
@@ -117,7 +123,8 @@ export default function App() {
       <div className="flex-1 flex overflow-hidden relative">
         {/* Results panel */}
         <div
-          className={`w-full lg:w-[480px] xl:w-[540px] overflow-y-auto op-paper border-r-2 border-op-bronze/30 scrollbar-thin shrink-0 ${
+          ref={listRef}
+          className={`w-full lg:w-[480px] xl:w-[540px] overflow-y-auto op-paper border-r-2 border-op-bronze/30 scrollbar-thin shrink-0 pb-24 lg:pb-0 ${
             mobileView === 'map' ? 'hidden lg:block' : ''
           }`}
         >
@@ -152,12 +159,15 @@ export default function App() {
         </div>
 
         {/* Mobile toggle button */}
-        <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-20">
+        <div
+          className="lg:hidden fixed left-1/2 -translate-x-1/2 z-20"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
+        >
           <button
             onClick={() =>
               setMobileView(mobileView === 'list' ? 'map' : 'list')
             }
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full op-panel-navy text-white text-sm font-semibold border border-op-gold/50 shadow-xl active:scale-95 transition-transform"
+            className="flex items-center gap-2 px-5 py-3 rounded-full op-panel-navy text-white text-sm font-semibold border border-op-gold/50 shadow-xl active:scale-95 transition-transform"
           >
             {mobileView === 'list' ? (
               <>

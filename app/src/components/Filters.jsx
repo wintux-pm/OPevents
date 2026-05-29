@@ -192,7 +192,8 @@ export default function Filters({
   const { t, lang } = useI18n()
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5">
+    <div className="relative">
+    <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5 pr-7">
       {countries.length > 0 && (
         <SelectChip
           value={filters.country}
@@ -262,6 +263,9 @@ export default function Filters({
           </button>
         </>
       )}
+    </div>
+      {/* scroll hint fade (mobile) */}
+      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-7 bg-gradient-to-l from-op-parchment-light to-transparent lg:hidden" />
     </div>
   )
 }

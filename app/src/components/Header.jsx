@@ -5,7 +5,10 @@ export default function Header({ onHome }) {
   const { t, lang, toggleLang } = useI18n()
 
   return (
-    <header className="relative bg-op-parchment-light/90 backdrop-blur-sm border-b-2 border-op-bronze/40 px-4 py-2 flex items-center justify-between shrink-0 shadow-sm">
+    <header
+      className="relative bg-op-parchment-light/90 backdrop-blur-sm border-b-2 border-op-bronze/40 px-4 py-2 flex items-center justify-between shrink-0 shadow-sm"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.5rem)' }}
+    >
       {/* gold hairline accent */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-op-gold/60 to-transparent" />
 

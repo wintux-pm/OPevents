@@ -32,7 +32,7 @@ export default function LandingPage({ events, cities, categories, countries, onE
     'w-full px-4 py-3 rounded-xl bg-op-parchment border-2 border-op-bronze/40 text-op-ink text-sm appearance-none cursor-pointer focus:outline-none focus:border-op-red focus:ring-1 focus:ring-op-red/30'
 
   return (
-    <div className="min-h-screen op-paper flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-dvh op-paper flex flex-col items-center justify-center p-6 relative overflow-x-hidden">
       {/* Nautical chart grid */}
       <div
         className="absolute inset-0 op-chart-grid pointer-events-none"

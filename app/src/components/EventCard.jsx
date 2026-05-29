@@ -25,7 +25,7 @@ function EventCard({ event, onClick, isSelected }) {
     <div className="px-3 py-1.5">
       <button
         onClick={() => onClick(event)}
-        className={`group block w-full text-left rounded-xl op-poster overflow-hidden cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg ${
+        className={`group block w-full text-left rounded-xl op-poster overflow-hidden cursor-pointer transition-all touch-manipulation hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.985] active:shadow-md ${
           isSelected ? 'ring-2 ring-op-red ring-offset-1 ring-offset-op-parchment' : ''
         }`}
       >

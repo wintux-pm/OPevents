@@ -22,12 +22,25 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html,
+body {
+  /* App-like feel on mobile: no pull-to-refresh / rubber-band on the shell */
+  overscroll-behavior-y: none;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: #f3e4c1;
   color: #2a2014;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Smooth, momentum scrolling for inner scroll areas */
+.scrollbar-thin,
+.scrollbar-none {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* ── Parchment / wanted-poster design system ──────────────── */

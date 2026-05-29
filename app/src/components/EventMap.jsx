@@ -28,29 +28,32 @@ function storeLabelHtml(name, count, color, showClose) {
   return `<div class="store-cluster" style="background:${color}"><span class="store-cluster-name">${escapeHtml(truncated)}</span><span class="store-cluster-count">${count}</span>${closeBtn}</div>`
 }
 
-const storeMarkerCache = {}
+const storeIconCache = {}
 
-function getStoreMarkerIcon(event, filteredStore) {
-  const storeName = event.store.name
-  const color = categoryColors[event.category] || DEFAULT_COLOR
-  const showClose = filteredStore === storeName
-  const cacheKey = `${storeName}__${color}__${showClose ? 1 : 0}`
-  if (storeMarkerCache[cacheKey]) return storeMarkerCache[cacheKey]
+// One icon per store group, showing the store name + number of events there.
+function getStoreGroupIcon(group, filteredStore) {
+  const color = group.sameCategory
+    ? categoryColors[group.category] || DEFAULT_COLOR
+    : DEFAULT_COLOR
+  const showClose = filteredStore === group.name
+  const cacheKey = `${group.name}__${color}__${group.events.length}__${showClose ? 1 : 0}`
+  if (storeIconCache[cacheKey]) return storeIconCache[cacheKey]
 
   const icon = L.divIcon({
-    html: storeLabelHtml(storeName, 1, color, showClose),
+    html: storeLabelHtml(group.name, group.events.length, color, showClose),
     className: 'store-cluster-icon',
     iconSize: L.point(40, 40),
     iconAnchor: L.point(20, 20),
   })
-  storeMarkerCache[cacheKey] = icon
+  storeIconCache[cacheKey] = icon
   return icon
 }
 
 function makeClusterIconFactory(filteredStore) {
   return function createClusterIcon(cluster) {
     const markers = cluster.getAllChildMarkers()
-    const count = markers.length
+    // Counts reflect total events, not just the number of store markers.
+    const count = markers.reduce((sum, m) => sum + (m.options.eventCount || 1), 0)
     const firstName = markers[0]?.options.alt
     const allSameStore = firstName && markers.every((m) => m.options.alt === firstName)
 
@@ -79,37 +82,58 @@ function makeClusterIconFactory(filteredStore) {
   }
 }
 
-function MapBounds({ events }) {
+function MapBounds({ groups }) {
   const map = useMap()
   const didFit = useRef(false)
 
   useEffect(() => {
-    if (didFit.current || events.length === 0) return
-    const points = events
-      .filter((e) => e.lat && e.lng)
-      .map((e) => [e.lat, e.lng])
+    if (didFit.current || groups.length === 0) return
+    const points = groups.map((g) => [g.lat, g.lng])
     if (points.length > 0) {
       map.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 13 })
       didFit.current = true
     }
-  }, [events, map])
+  }, [groups, map])
 
   return null
 }
 
 function EventMap({ events, onSelectEvent, storeName, onClearStore }) {
   const wrapperRef = useRef(null)
-  const geoEvents = useMemo(
-    () => events.filter((e) => e.lat && e.lng),
-    [events],
-  )
+
+  // Aggregate events into one marker per store/location. With tens of
+  // thousands of events this cuts the marker count by an order of magnitude,
+  // which is what keeps the map fast (and able to load at all) on mobile.
+  const storeGroups = useMemo(() => {
+    const map = new Map()
+    for (const e of events) {
+      if (!e.lat || !e.lng) continue
+      const key = `${e.store.name}@${e.lat.toFixed(4)},${e.lng.toFixed(4)}`
+      let group = map.get(key)
+      if (!group) {
+        group = {
+          key,
+          lat: e.lat,
+          lng: e.lng,
+          name: e.store.name,
+          category: e.category,
+          sameCategory: true,
+          events: [],
+        }
+        map.set(key, group)
+      }
+      if (group.category !== e.category) group.sameCategory = false
+      group.events.push(e)
+    }
+    return [...map.values()]
+  }, [events])
 
   const center = useMemo(() => {
-    if (geoEvents.length === 0) return [46.0, 5.0]
-    const sumLat = geoEvents.reduce((s, e) => s + e.lat, 0)
-    const sumLng = geoEvents.reduce((s, e) => s + e.lng, 0)
-    return [sumLat / geoEvents.length, sumLng / geoEvents.length]
-  }, [geoEvents])
+    if (storeGroups.length === 0) return [46.0, 5.0]
+    const sumLat = storeGroups.reduce((s, g) => s + g.lat, 0)
+    const sumLng = storeGroups.reduce((s, g) => s + g.lng, 0)
+    return [sumLat / storeGroups.length, sumLng / storeGroups.length]
+  }, [storeGroups])
 
   const clusterIconFn = useCallback(
     (cluster) => makeClusterIconFactory(storeName)(cluster),
@@ -141,23 +165,25 @@ function EventMap({ events, onSelectEvent, storeName, onClearStore }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
-        <MapBounds events={geoEvents} />
+        <MapBounds groups={storeGroups} />
         <MarkerClusterGroup
           chunkedLoading
           maxClusterRadius={50}
           spiderfyOnMaxZoom
           spiderfyDistanceMultiplier={2.5}
           showCoverageOnHover={false}
+          removeOutsideVisibleBounds
           iconCreateFunction={clusterIconFn}
         >
-          {geoEvents.map((event) => (
+          {storeGroups.map((group) => (
             <Marker
-              key={event.id}
-              position={[event.lat, event.lng]}
-              icon={getStoreMarkerIcon(event, storeName)}
-              alt={event.store.name}
-              category={event.category}
-              eventHandlers={{ click: () => onSelectEvent(event) }}
+              key={group.key}
+              position={[group.lat, group.lng]}
+              icon={getStoreGroupIcon(group, storeName)}
+              alt={group.name}
+              category={group.sameCategory ? group.category : 'mixed'}
+              eventCount={group.events.length}
+              eventHandlers={{ click: () => onSelectEvent(group.events[0]) }}
             />
           ))}
         </MarkerClusterGroup>
