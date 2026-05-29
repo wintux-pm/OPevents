@@ -87,6 +87,12 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
 
   const cat = categoryConfig[event.category] || categoryConfig.storeTournament
 
+  const bounty = !event.hasFee
+    ? t('priceNA')
+    : event.isFree
+      ? t('free')
+      : `${event.fee.toFixed(0)}${event.feeCurrency === 'EUR' ? '€' : event.feeCurrency}`
+
   return (
     <>
       <div
@@ -95,32 +101,73 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
       />
 
       <div className="fixed z-50 inset-0 flex items-end lg:items-center justify-center p-0 lg:p-6 animate-fade-in" onClick={onClose}>
-        <div className="op-poster rounded-t-2xl lg:rounded-2xl !shadow-2xl overflow-hidden flex flex-col max-h-[92vh] lg:max-h-[85vh] w-full lg:w-[460px]" onClick={(e) => e.stopPropagation()}>
-          {/* Header */}
-          <div className="relative px-5 pt-5 pb-4" style={{ background: cat.color }}>
+        <div className="relative op-poster rounded-t-2xl lg:rounded-2xl !shadow-2xl overflow-hidden flex flex-col max-h-[92vh] lg:max-h-[85vh] w-full lg:w-[460px]" onClick={(e) => e.stopPropagation()}>
+          {/* Corner brackets */}
+          <span className="pointer-events-none absolute top-2.5 left-2.5 w-5 h-5 border-t-2 border-l-2 border-op-bronze/60 z-10" />
+          <span className="pointer-events-none absolute top-2.5 right-2.5 w-5 h-5 border-t-2 border-r-2 border-op-bronze/60 z-10" />
+          <span className="pointer-events-none absolute bottom-2.5 left-2.5 w-5 h-5 border-b-2 border-l-2 border-op-bronze/60 z-10" />
+          <span className="pointer-events-none absolute bottom-2.5 right-2.5 w-5 h-5 border-b-2 border-r-2 border-op-bronze/60 z-10" />
+
+          {/* Wanted-poster header */}
+          <div className="relative px-6 pt-4 pb-4 text-center shrink-0">
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-white"
+              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-op-parchment-dark/70 hover:bg-op-parchment-dark border border-op-bronze/40 flex items-center justify-center transition-colors text-op-ink z-20"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">{cat.icon}</span>
-              <span className="text-[11px] font-medium text-white/80 bg-white/15 px-2 py-0.5 rounded-full">
-                {t(cat.label)}
-              </span>
+
+            {/* WANTED */}
+            <div className="flex items-center justify-center gap-2.5 mb-3">
+              <span className="h-0.5 flex-1 max-w-[40px] bg-op-ink/70" />
+              <h2 className="text-3xl font-black uppercase tracking-[0.18em] text-op-ink leading-none">
+                Wanted
+              </h2>
+              <span className="h-0.5 flex-1 max-w-[40px] bg-op-ink/70" />
             </div>
-            <h2 className="font-bold text-xl text-white leading-tight pr-8">
+
+            {/* Portrait frame */}
+            <div
+              className="mx-auto w-28 h-28 rounded-md border-[3px] border-op-ink/80 flex items-center justify-center text-6xl shadow-[inset_0_0_18px_rgba(42,32,20,0.25)]"
+              style={{ background: cat.color + '26' }}
+            >
+              {cat.icon}
+            </div>
+
+            {/* DEAD OR ALIVE */}
+            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-op-ink mt-3 mb-2">
+              Dead or Alive
+            </p>
+
+            <span
+              className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded mb-1.5"
+              style={{ color: cat.color, backgroundColor: cat.color + '1f' }}
+            >
+              {t(cat.label)}
+            </span>
+
+            <h3 className="font-black text-xl text-op-ink uppercase leading-tight px-4">
               {event.store.name}
-            </h2>
-            <p className="text-sm text-white/75 mt-1">
+            </h3>
+            <p className="text-sm text-op-ink-soft mt-0.5">
               {event.store.city},{' '}
               {countryNames[event.store.countryCode]?.[lang] ||
                 event.store.countryCode}
             </p>
+
+            {/* Bounty */}
+            <div className="flex items-center justify-center gap-2.5 mt-3">
+              <span className="h-px w-8 bg-op-bronze/50" />
+              <span className="text-2xl font-black text-op-ink tracking-wide whitespace-nowrap">
+                <span className="text-op-bronze mr-1">฿</span>{bounty}
+              </span>
+              <span className="h-px w-8 bg-op-bronze/50" />
+            </div>
           </div>
+
+          <div className="op-divider-dashed mx-5 shrink-0" />
 
           {/* Stats row */}
           <div className="grid grid-cols-3 border-b border-op-bronze/25">
@@ -235,6 +282,9 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
 
           {/* CTA */}
           <div className="p-4 border-t-2 border-op-bronze/30 bg-op-parchment-light shrink-0 space-y-2.5">
+            <p className="text-center text-[9px] font-bold uppercase tracking-[0.3em] text-op-bronze/80 pb-0.5">
+              ⚓ Marine · World Government ⚓
+            </p>
             {onFilterStore && (
               <button
                 onClick={() => onFilterStore(event.store.name)}
