@@ -41,20 +41,20 @@ export default function EventList({
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center px-6">
         <div className="text-5xl mb-4">🏴‍☠️</div>
-        <h3 className="text-base font-semibold text-slate-700">
+        <h3 className="text-base font-bold text-op-ink uppercase tracking-wide">
           {t('noEvents')}
         </h3>
-        <p className="text-sm text-slate-400 mt-1">{t('noEventsDesc')}</p>
+        <p className="text-sm text-op-ink-soft mt-1">{t('noEventsDesc')}</p>
       </div>
     )
   }
 
   return (
     <div>
-      <div className="px-5 py-2.5 text-[13px] text-slate-500 border-b border-slate-100 bg-white sticky top-0 z-10">
-        <span className="font-semibold text-slate-800">{events.length}</span>{' '}
+      <div className="px-5 py-2.5 text-[13px] text-op-ink-soft border-b-2 border-op-bronze/30 bg-op-parchment-light/90 backdrop-blur-sm sticky top-0 z-10 uppercase tracking-wide">
+        <span className="font-bold text-op-ink">{events.length}</span>{' '}
         {t('of')}{' '}
-        <span className="font-semibold text-slate-800">{totalCount}</span>{' '}
+        <span className="font-bold text-op-ink">{totalCount}</span>{' '}
         {events.length === 1 ? t('event') : t('events')}
       </div>
 
@@ -71,8 +71,8 @@ export default function EventList({
 
       {visibleCount < events.length && (
         <div ref={loaderRef} className="py-8 text-center">
-          <div className="inline-flex items-center gap-2 text-sm text-slate-400">
-            <div className="w-4 h-4 border-2 border-slate-300 border-t-op-red rounded-full animate-spin" />
+          <div className="inline-flex items-center gap-2 text-sm text-op-ink-soft">
+            <div className="w-4 h-4 border-2 border-op-parchment-dark border-t-op-red rounded-full animate-spin" />
             {t('loading')}
           </div>
         </div>

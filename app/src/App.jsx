@@ -92,11 +92,11 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-white overflow-hidden">
+    <div className="h-screen flex flex-col op-paper overflow-hidden">
       <Header onHome={handleGoHome} />
 
       {/* Search & Filters */}
-      <div className="border-b border-slate-200 bg-white shrink-0 z-20">
+      <div className="border-b-2 border-op-bronze/30 bg-op-parchment-light/80 backdrop-blur-sm shrink-0 z-20 shadow-sm">
         <div className="max-w-none px-4 lg:px-5 py-2.5 space-y-2">
           <SearchBar
             value={filters.search}
@@ -116,7 +116,7 @@ export default function App() {
       <div className="flex-1 flex overflow-hidden relative">
         {/* Results panel */}
         <div
-          className={`w-full lg:w-[480px] xl:w-[540px] overflow-y-auto bg-white border-r border-slate-200 scrollbar-thin shrink-0 ${
+          className={`w-full lg:w-[480px] xl:w-[540px] overflow-y-auto op-paper border-r-2 border-op-bronze/30 scrollbar-thin shrink-0 ${
             mobileView === 'map' ? 'hidden lg:block' : ''
           }`}
         >
@@ -136,8 +136,8 @@ export default function App() {
         >
           <Suspense
             fallback={
-              <div className="h-full flex items-center justify-center bg-slate-50">
-                <div className="w-5 h-5 border-2 border-slate-200 border-t-op-red rounded-full animate-spin" />
+              <div className="h-full flex items-center justify-center op-paper">
+                <div className="w-5 h-5 border-2 border-op-parchment-dark border-t-op-red rounded-full animate-spin" />
               </div>
             }
           >
@@ -156,7 +156,7 @@ export default function App() {
             onClick={() =>
               setMobileView(mobileView === 'list' ? 'map' : 'list')
             }
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-op-navy text-white text-sm font-semibold shadow-xl active:scale-95 transition-transform"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full op-panel-navy text-white text-sm font-semibold border border-op-gold/50 shadow-xl active:scale-95 transition-transform"
           >
             {mobileView === 'list' ? (
               <>

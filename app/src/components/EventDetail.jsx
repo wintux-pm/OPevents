@@ -21,7 +21,7 @@ const countryNames = {
 function StatusBadge({ event, t }) {
   if (event.isCanceled)
     return (
-      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-500">
+      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-op-parchment-dark text-op-ink-soft">
         {t('statusCanceled')}
       </span>
     )
@@ -38,7 +38,7 @@ function StatusBadge({ event, t }) {
       </span>
     )
   return (
-    <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-400">
+    <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-op-parchment-dark text-op-ink-soft">
       {t('statusClosed')}
     </span>
   )
@@ -56,14 +56,14 @@ function InfoRow({ icon, label, value, href }) {
       {value}
     </a>
   ) : (
-    <span className="text-slate-800 break-all">{value}</span>
+    <span className="text-op-ink break-all">{value}</span>
   )
 
   return (
     <div className="flex items-start gap-2.5 py-2">
-      <span className="text-slate-400 shrink-0 mt-0.5">{icon}</span>
+      <span className="text-op-ink-soft shrink-0 mt-0.5">{icon}</span>
       <div className="min-w-0">
-        <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+        <div className="text-[10px] text-op-ink-soft font-medium uppercase tracking-wider">
           {label}
         </div>
         <div className="text-[13px] leading-snug mt-0.5">{content}</div>
@@ -90,12 +90,12 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/30 z-40 animate-fade-in"
+        className="fixed inset-0 bg-op-ink/50 z-40 animate-fade-in"
         onClick={onClose}
       />
 
       <div className="fixed z-50 inset-0 flex items-end lg:items-center justify-center p-0 lg:p-6 animate-fade-in" onClick={onClose}>
-        <div className="bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] lg:max-h-[85vh] w-full lg:w-[460px]" onClick={(e) => e.stopPropagation()}>
+        <div className="op-poster rounded-t-2xl lg:rounded-2xl !shadow-2xl overflow-hidden flex flex-col max-h-[92vh] lg:max-h-[85vh] w-full lg:w-[460px]" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="relative px-5 pt-5 pb-4" style={{ background: cat.color }}>
             <button
@@ -123,24 +123,24 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
           </div>
 
           {/* Stats row */}
-          <div className="grid grid-cols-3 border-b border-slate-100">
-            <div className="p-3 text-center border-r border-slate-100">
-              <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+          <div className="grid grid-cols-3 border-b border-op-bronze/25">
+            <div className="p-3 text-center border-r border-op-bronze/25">
+              <div className="text-[10px] text-op-ink-soft font-medium uppercase tracking-wider">
                 {t('date')}
               </div>
-              <div className="text-[13px] font-semibold text-slate-800 mt-1">
+              <div className="text-[13px] font-semibold text-op-ink mt-1">
                 {formatFullDate(event.startDate, lang).split(',').slice(0, 1)}
               </div>
-              <div className="text-[11px] text-slate-400">
+              <div className="text-[11px] text-op-ink-soft">
                 {formatEventTime(event.startDate)}
               </div>
             </div>
-            <div className="p-3 text-center border-r border-slate-100">
-              <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+            <div className="p-3 text-center border-r border-op-bronze/25">
+              <div className="text-[10px] text-op-ink-soft font-medium uppercase tracking-wider">
                 {t('fee')}
               </div>
               <div
-                className={`text-[13px] font-bold mt-1 ${!event.hasFee || event.isFree ? 'text-slate-400' : 'text-slate-800'}`}
+                className={`text-[13px] font-bold mt-1 ${!event.hasFee || event.isFree ? 'text-op-ink-soft' : 'text-op-ink'}`}
               >
                 {!event.hasFee || event.isFree
                   ? t('priceNA')
@@ -148,19 +148,19 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
               </div>
             </div>
             <div className="p-3 text-center">
-              <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+              <div className="text-[10px] text-op-ink-soft font-medium uppercase tracking-wider">
                 {t('capacity')}
               </div>
-              <div className="text-[13px] font-semibold text-slate-800 mt-1">
+              <div className="text-[13px] font-semibold text-op-ink mt-1">
                 {event.capacity}
               </div>
             </div>
           </div>
 
           {/* Status */}
-          <div className="px-5 py-2.5 flex items-center gap-2 border-b border-slate-100">
+          <div className="px-5 py-2.5 flex items-center gap-2 border-b border-op-bronze/25">
             <StatusBadge event={event} t={t} />
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-op-ink-soft">
               {event.entryType === 1 ? t('firstCome') : t('application')}
             </span>
           </div>
@@ -168,18 +168,18 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
           {/* Scrollable content */}
           <div className="overflow-y-auto flex-1 scrollbar-thin">
             {event.excerpt && (
-              <div className="px-5 py-3 border-b border-slate-100">
-                <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1">
+              <div className="px-5 py-3 border-b border-op-bronze/25">
+                <div className="text-[10px] text-op-ink-soft font-medium uppercase tracking-wider mb-1">
                   {t('description')}
                 </div>
-                <p className="text-[13px] text-slate-600 leading-relaxed">
+                <p className="text-[13px] text-op-ink leading-relaxed">
                   {event.excerpt}
                 </p>
               </div>
             )}
 
-            <div className="px-5 py-3 border-b border-slate-100">
-              <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">
+            <div className="px-5 py-3 border-b border-op-bronze/25">
+              <h3 className="text-[10px] font-semibold text-op-ink-soft uppercase tracking-wider mb-0.5">
                 {t('eventDetails')}
               </h3>
               <InfoRow
@@ -197,7 +197,7 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
             </div>
 
             <div className="px-5 py-3">
-              <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">
+              <h3 className="text-[10px] font-semibold text-op-ink-soft uppercase tracking-wider mb-0.5">
                 {t('storeInfo')}
               </h3>
               <InfoRow
@@ -234,14 +234,14 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
           </div>
 
           {/* CTA */}
-          <div className="p-4 border-t border-slate-100 bg-white shrink-0 space-y-2.5">
+          <div className="p-4 border-t-2 border-op-bronze/30 bg-op-parchment-light shrink-0 space-y-2.5">
             {onFilterStore && (
               <button
                 onClick={() => onFilterStore(event.store.name)}
                 className={`flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-semibold text-sm border transition-colors ${
                   isStoreFiltered
-                    ? 'border-slate-200 text-slate-500 hover:bg-slate-50'
-                    : 'border-op-red/30 text-op-red hover:bg-op-red/5'
+                    ? 'border-op-bronze/40 text-op-ink-soft hover:bg-op-parchment-dark/50'
+                    : 'border-op-red/40 text-op-red hover:bg-op-red/10'
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>

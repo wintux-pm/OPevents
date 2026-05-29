@@ -7,8 +7,8 @@ function FilterChip({ label, active, onClick }) {
       onClick={onClick}
       className={`shrink-0 px-3.5 py-1.5 rounded-full text-[13px] font-medium border transition-all whitespace-nowrap ${
         active
-          ? 'bg-op-navy text-white border-op-navy'
-          : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400 hover:shadow-sm'
+          ? 'bg-op-navy text-white border-op-gold/60 shadow-sm'
+          : 'bg-op-parchment-light text-op-ink border-op-bronze/40 hover:border-op-bronze/70 hover:shadow-sm'
       }`}
     >
       {label}
@@ -16,8 +16,7 @@ function FilterChip({ label, active, onClick }) {
   )
 }
 
-function SelectChip({ value, onChange, placeholder, options, t }) {
-  const displayLabel = value ? (t ? t(value) : value) : placeholder
+function SelectChip({ value, onChange, placeholder, options }) {
   const active = !!value
 
   return (
@@ -27,8 +26,8 @@ function SelectChip({ value, onChange, placeholder, options, t }) {
         onChange={(e) => onChange(e.target.value)}
         className={`appearance-none cursor-pointer px-3.5 py-1.5 pr-7 rounded-full text-[13px] font-medium border transition-all outline-none ${
           active
-            ? 'bg-op-navy text-white border-op-navy'
-            : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400 hover:shadow-sm'
+            ? 'bg-op-navy text-white border-op-gold/60 shadow-sm'
+            : 'bg-op-parchment-light text-op-ink border-op-bronze/40 hover:border-op-bronze/70 hover:shadow-sm'
         }`}
       >
         <option value="">{placeholder}</option>
@@ -39,7 +38,7 @@ function SelectChip({ value, onChange, placeholder, options, t }) {
         ))}
       </select>
       <svg
-        className={`w-3 h-3 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none ${active ? 'text-white' : 'text-slate-400'}`}
+        className={`w-3 h-3 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none ${active ? 'text-white' : 'text-op-bronze'}`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -107,13 +106,13 @@ function DateChip({ filters, onUpdate }) {
         onClick={() => setOpen(!open)}
         className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium border transition-all whitespace-nowrap flex items-center gap-1 ${
           hasDate
-            ? 'bg-op-navy text-white border-op-navy'
-            : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400 hover:shadow-sm'
+            ? 'bg-op-navy text-white border-op-gold/60 shadow-sm'
+            : 'bg-op-parchment-light text-op-ink border-op-bronze/40 hover:border-op-bronze/70 hover:shadow-sm'
         }`}
       >
         {displayLabel}
         <svg
-          className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''} ${hasDate ? 'text-white' : 'text-slate-400'}`}
+          className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''} ${hasDate ? 'text-white' : 'text-op-bronze'}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -126,7 +125,7 @@ function DateChip({ filters, onUpdate }) {
       {open && (
         <div
           ref={dropRef}
-          className="fixed bg-white rounded-xl shadow-xl border border-slate-200 p-3 z-50 min-w-[220px] animate-fade-in"
+          className="fixed op-poster rounded-xl p-3 z-50 min-w-[220px] animate-fade-in"
           style={{ top: pos.top, left: pos.left }}
         >
           <div className="flex gap-1.5 mb-3">
@@ -146,8 +145,8 @@ function DateChip({ filters, onUpdate }) {
                   }}
                   className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                     isActive
-                      ? 'bg-op-navy text-white border-op-navy'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300'
+                      ? 'bg-op-navy text-white border-op-gold/60'
+                      : 'bg-op-parchment text-op-ink-soft border-op-bronze/30 hover:border-op-bronze/60'
                   }`}
                 >
                   {q.label}
@@ -157,25 +156,25 @@ function DateChip({ filters, onUpdate }) {
           </div>
           <div className="space-y-2">
             <div>
-              <label className="text-[11px] text-slate-500 font-medium mb-0.5 block">
+              <label className="text-[11px] text-op-ink-soft font-medium mb-0.5 block">
                 {t('dateFrom')}
               </label>
               <input
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) => onUpdate({ dateFrom: e.target.value })}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-sm bg-white focus:ring-1 focus:ring-op-red/30 focus:border-op-red outline-none"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-op-bronze/40 text-sm bg-op-parchment-light text-op-ink focus:ring-1 focus:ring-op-red/30 focus:border-op-red outline-none"
               />
             </div>
             <div>
-              <label className="text-[11px] text-slate-500 font-medium mb-0.5 block">
+              <label className="text-[11px] text-op-ink-soft font-medium mb-0.5 block">
                 {t('dateTo')}
               </label>
               <input
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) => onUpdate({ dateTo: e.target.value })}
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-sm bg-white focus:ring-1 focus:ring-op-red/30 focus:border-op-red outline-none"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-op-bronze/40 text-sm bg-op-parchment-light text-op-ink focus:ring-1 focus:ring-op-red/30 focus:border-op-red outline-none"
               />
             </div>
           </div>
@@ -228,13 +227,12 @@ export default function Filters({
         }
       />
 
-      <div className="w-px h-5 bg-slate-200 shrink-0" />
+      <div className="w-px h-5 bg-op-bronze/30 shrink-0" />
 
       <SelectChip
         value={filters.category}
         onChange={(val) => onUpdate({ category: val })}
         placeholder={t('eventType')}
-        t={t}
         options={categories.map((cat) => ({ value: cat, label: t(cat) }))}
       />
 
@@ -247,16 +245,16 @@ export default function Filters({
         />
       )}
 
-      <div className="w-px h-5 bg-slate-200 shrink-0" />
+      <div className="w-px h-5 bg-op-bronze/30 shrink-0" />
 
       <DateChip filters={filters} onUpdate={onUpdate} />
 
       {filters.storeName && (
         <>
-          <div className="w-px h-5 bg-slate-200 shrink-0" />
+          <div className="w-px h-5 bg-op-bronze/30 shrink-0" />
           <button
             onClick={() => onUpdate({ storeName: '' })}
-            className="shrink-0 flex items-center gap-1 px-3.5 py-1.5 rounded-full text-[13px] font-medium bg-op-navy text-white border border-op-navy transition-all"
+            className="shrink-0 flex items-center gap-1 px-3.5 py-1.5 rounded-full text-[13px] font-medium bg-op-navy text-white border border-op-gold/60 transition-all"
           >
             🏪 {filters.storeName}
             <svg className="w-3 h-3 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -268,7 +266,7 @@ export default function Filters({
 
       {activeFilterCount > 0 && (
         <>
-          <div className="w-px h-5 bg-slate-200 shrink-0" />
+          <div className="w-px h-5 bg-op-bronze/30 shrink-0" />
           <button
             onClick={() =>
               onUpdate({
