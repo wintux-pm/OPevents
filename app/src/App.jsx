@@ -23,7 +23,7 @@ const initialFilters = {
 
 export default function App() {
   const { t } = useI18n()
-  const { events, loading, cities, categories } = useEvents()
+  const { events, loading, cities, categories, countries } = useEvents()
   const [filters, setFilters] = useState(initialFilters)
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [mobileView, setMobileView] = useState('list')
@@ -88,7 +88,7 @@ export default function App() {
   if (loading) return <LoadingScreen />
 
   if (showLanding) {
-    return <LandingPage events={events} cities={cities} categories={categories} onEnter={handleLandingEnter} />
+    return <LandingPage events={events} cities={cities} categories={categories} countries={countries} onEnter={handleLandingEnter} />
   }
 
   return (
@@ -107,6 +107,7 @@ export default function App() {
             onUpdate={updateFilters}
             cities={filteredCities}
             categories={categories}
+            countries={countries}
             activeFilterCount={activeFilterCount}
           />
         </div>

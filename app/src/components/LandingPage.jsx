@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import StrawHat from './StrawHat'
+import { countryFlag, countryName } from '../utils/country'
 
-export default function LandingPage({ events, cities, categories, onEnter }) {
+export default function LandingPage({ events, cities, categories, countries, onEnter }) {
   const { t, lang, toggleLang } = useI18n()
   const [country, setCountry] = useState('')
   const [city, setCity] = useState('')
@@ -98,28 +99,26 @@ export default function LandingPage({ events, cities, categories, onEnter }) {
 
         {/* Filters */}
         <div className="space-y-3 mb-6 text-left">
-          <div className="flex gap-3">
-            <button
-              onClick={() => { setCountry(country === 'ES' ? '' : 'ES'); setCity('') }}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition-all ${
-                country === 'ES'
-                  ? 'bg-op-red text-white border-op-gold/70 shadow-md'
-                  : 'bg-op-parchment text-op-ink border-op-bronze/40 hover:border-op-bronze/70'
-              }`}
-            >
-              🇪🇸 {t('spain')}
-            </button>
-            <button
-              onClick={() => { setCountry(country === 'DE' ? '' : 'DE'); setCity('') }}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition-all ${
-                country === 'DE'
-                  ? 'bg-op-red text-white border-op-gold/70 shadow-md'
-                  : 'bg-op-parchment text-op-ink border-op-bronze/40 hover:border-op-bronze/70'
-              }`}
-            >
-              🇩🇪 {t('germany')}
-            </button>
-          </div>
+          {countries.length > 0 && (
+            <div className="flex flex-wrap gap-2 justify-center">
+              {countries.map((c) => {
+                const active = country === c
+                return (
+                  <button
+                    key={c}
+                    onClick={() => { setCountry(active ? '' : c); setCity('') }}
+                    className={`py-2 px-3 rounded-xl text-[13px] font-bold border-2 transition-all ${
+                      active
+                        ? 'bg-op-red text-white border-op-gold/70 shadow-md'
+                        : 'bg-op-parchment text-op-ink border-op-bronze/40 hover:border-op-bronze/70'
+                    }`}
+                  >
+                    {countryFlag(c)} {countryName(c, lang)}
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
           {filteredCities.length > 0 && (
             <select value={city} onChange={(e) => setCity(e.target.value)} className={selectClass}>

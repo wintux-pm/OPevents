@@ -1,20 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useI18n } from '../i18n/I18nContext'
-
-function FilterChip({ label, active, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`shrink-0 px-3.5 py-1.5 rounded-full text-[13px] font-medium border transition-all whitespace-nowrap ${
-        active
-          ? 'bg-op-navy text-white border-op-gold/60 shadow-sm'
-          : 'bg-op-parchment-light text-op-ink border-op-bronze/40 hover:border-op-bronze/70 hover:shadow-sm'
-      }`}
-    >
-      {label}
-    </button>
-  )
-}
+import { countryFlag, countryName } from '../utils/country'
 
 function SelectChip({ value, onChange, placeholder, options }) {
   const active = !!value
@@ -200,32 +186,24 @@ export default function Filters({
   onUpdate,
   cities,
   categories,
+  countries,
   activeFilterCount,
 }) {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
 
   return (
     <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5">
-      <FilterChip
-        label={`🇪🇸 ${t('spain')}`}
-        active={filters.country === 'ES'}
-        onClick={() =>
-          onUpdate({
-            country: filters.country === 'ES' ? '' : 'ES',
-            city: '',
-          })
-        }
-      />
-      <FilterChip
-        label={`🇩🇪 ${t('germany')}`}
-        active={filters.country === 'DE'}
-        onClick={() =>
-          onUpdate({
-            country: filters.country === 'DE' ? '' : 'DE',
-            city: '',
-          })
-        }
-      />
+      {countries.length > 0 && (
+        <SelectChip
+          value={filters.country}
+          onChange={(val) => onUpdate({ country: val, city: '' })}
+          placeholder={t('country')}
+          options={countries.map((c) => ({
+            value: c,
+            label: `${countryFlag(c)} ${countryName(c, lang)}`,
+          }))}
+        />
+      )}
 
       <div className="w-px h-5 bg-op-bronze/30 shrink-0" />
 

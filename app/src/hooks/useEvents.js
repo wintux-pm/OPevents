@@ -93,23 +93,46 @@ export function useEvents() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([
-      fetch('/data/one_piece_events_es.json').then((r) => r.json()),
-      fetch('/data/one_piece_events_de.json').then((r) => r.json()),
-    ]).then(([esData, deData]) => {
-      const allEvents = [
-        ...esData.events.map(normalizeEvent),
-        ...deData.events.map(normalizeEvent),
-      ]
-      const uniqueMap = new Map()
-      for (const ev of allEvents) {
-        uniqueMap.set(ev.id, ev)
+    let cancelled = false
+
+    async function load() {
+      try {
+        const files = await fetch('/data/manifest.json').then((r) => r.json())
+        const results = await Promise.allSettled(
+          files.map((file) =>
+            fetch(`/data/${file}`).then((r) => {
+              if (!r.ok) throw new Error(`Failed to load ${file}`)
+              return r.json()
+            }),
+          ),
+        )
+
+        const uniqueMap = new Map()
+        for (const result of results) {
+          if (result.status !== 'fulfilled') {
+            console.error(result.reason)
+            continue
+          }
+          for (const ev of result.value.events || []) {
+            const normalized = normalizeEvent(ev)
+            uniqueMap.set(normalized.id, normalized)
+          }
+        }
+
+        const unique = [...uniqueMap.values()]
+        unique.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+        if (!cancelled) setEvents(unique)
+      } catch (err) {
+        console.error('Failed to load event data', err)
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-      const unique = [...uniqueMap.values()]
-      unique.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
-      setEvents(unique)
-      setLoading(false)
-    })
+    }
+
+    load()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const cities = useMemo(() => {
@@ -128,7 +151,15 @@ export function useEvents() {
     return [...catSet].sort()
   }, [events])
 
-  return { events, loading, cities, categories }
+  const countries = useMemo(() => {
+    const set = new Set()
+    for (const ev of events) {
+      if (ev.store.countryCode) set.add(ev.store.countryCode.toUpperCase())
+    }
+    return [...set].sort()
+  }, [events])
+
+  return { events, loading, cities, categories, countries }
 }
 
 export function useFilteredEvents(events, filters) {

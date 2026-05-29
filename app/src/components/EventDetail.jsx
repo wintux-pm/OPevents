@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import { formatFullDate, formatEventTime } from '../utils/date'
+import { countryFlag, countryName } from '../utils/country'
 
 const categoryConfig = {
   storeTournament: { color: '#3b82f6', label: 'storeTournament', icon: '🏪' },
@@ -11,11 +12,6 @@ const categoryConfig = {
   sealedBattle: { color: '#14b8a6', label: 'sealedBattle', icon: '📦' },
   buddyBattle: { color: '#ec4899', label: 'buddyBattle', icon: '🤝' },
   twoontwoBattle: { color: '#f97316', label: 'twoontwoBattle', icon: '👥' },
-}
-
-const countryNames = {
-  ES: { es: 'España', en: 'Spain' },
-  DE: { es: 'Alemania', en: 'Germany' },
 }
 
 function StatusBadge({ event, t }) {
@@ -152,9 +148,8 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
               {event.store.name}
             </h3>
             <p className="text-sm text-op-ink-soft mt-0.5">
-              {event.store.city},{' '}
-              {countryNames[event.store.countryCode]?.[lang] ||
-                event.store.countryCode}
+              {countryFlag(event.store.countryCode)} {event.store.city},{' '}
+              {countryName(event.store.countryCode, lang)}
             </p>
 
             {/* Bounty */}

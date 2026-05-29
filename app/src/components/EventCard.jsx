@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import { formatEventDate, formatEventTime } from '../utils/date'
+import { countryFlag } from '../utils/country'
 
 const categoryConfig = {
   storeTournament: { color: '#3b82f6', icon: '🏪' },
@@ -12,8 +13,6 @@ const categoryConfig = {
   buddyBattle: { color: '#ec4899', icon: '🤝' },
   twoontwoBattle: { color: '#f97316', icon: '👥' },
 }
-
-const countryFlags = { ES: '🇪🇸', DE: '🇩🇪' }
 
 function EventCard({ event, onClick, isSelected }) {
   const { t, lang } = useI18n()
@@ -60,7 +59,7 @@ function EventCard({ event, onClick, isSelected }) {
             </h3>
 
             <p className="text-xs text-op-ink-soft mt-0.5 truncate">
-              {countryFlags[event.store.countryCode]} {event.store.city}
+              {countryFlag(event.store.countryCode)} {event.store.city}
               <span className="text-op-bronze/50 mx-1">·</span>
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.store.address}, ${event.store.postcode} ${event.store.city}`)}`}
