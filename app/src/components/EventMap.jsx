@@ -1,7 +1,10 @@
 import { memo, useMemo, useEffect, useCallback, useRef } from 'react'
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
+import { useI18n } from '../i18n/I18nContext'
+import { formatEventDate, formatEventTime } from '../utils/date'
+import { countryFlag } from '../utils/country'
 
 const categoryColors = {
   storeTournament: '#3b82f6',
@@ -80,6 +83,63 @@ function makeClusterIconFactory(filteredStore) {
       iconSize: L.point(40, 40),
     })
   }
+}
+
+// Popup shown when a store has more than one event: store header + the full
+// list of its events, each one opening that event's detail card on click.
+function StorePopup({ group, onSelectEvent }) {
+  const { t, lang } = useI18n()
+  const map = useMap()
+
+  const events = useMemo(
+    () =>
+      [...group.events].sort(
+        (a, b) => new Date(a.startDate) - new Date(b.startDate),
+      ),
+    [group.events],
+  )
+  const first = events[0]
+
+  const handleSelect = (event) => {
+    map.closePopup()
+    onSelectEvent(event)
+  }
+
+  return (
+    <div className="store-popup">
+      <div className="store-popup-header">
+        <strong className="store-popup-name">{group.name}</strong>
+        <span className="store-popup-meta">
+          {countryFlag(first.store.countryCode)} {first.store.city}
+          <span className="store-popup-dot">·</span>
+          {events.length} {t(events.length === 1 ? 'event' : 'events')}
+        </span>
+      </div>
+      <ul className="store-popup-list">
+        {events.map((event) => (
+          <li key={event.id}>
+            <button
+              type="button"
+              className="store-popup-event"
+              onClick={() => handleSelect(event)}
+            >
+              <span
+                className="store-popup-event-dot"
+                style={{ background: categoryColors[event.category] || DEFAULT_COLOR }}
+              />
+              <span className="store-popup-event-info">
+                <span className="store-popup-event-cat">{t(event.category)}</span>
+                <span className="store-popup-event-date">
+                  {formatEventDate(event.startDate, lang)} · {formatEventTime(event.startDate)}
+                </span>
+              </span>
+              <span className="store-popup-event-arrow">›</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 function MapBounds({ groups }) {
@@ -175,17 +235,30 @@ function EventMap({ events, onSelectEvent, storeName, onClearStore }) {
           removeOutsideVisibleBounds
           iconCreateFunction={clusterIconFn}
         >
-          {storeGroups.map((group) => (
-            <Marker
-              key={group.key}
-              position={[group.lat, group.lng]}
-              icon={getStoreGroupIcon(group, storeName)}
-              alt={group.name}
-              category={group.sameCategory ? group.category : 'mixed'}
-              eventCount={group.events.length}
-              eventHandlers={{ click: () => onSelectEvent(group.events[0]) }}
-            />
-          ))}
+          {storeGroups.map((group) => {
+            // A single event opens its card right away; multiple events show a
+            // popup listing the store and its events so the user can pick one.
+            const single = group.events.length === 1
+            return (
+              <Marker
+                key={group.key}
+                position={[group.lat, group.lng]}
+                icon={getStoreGroupIcon(group, storeName)}
+                alt={group.name}
+                category={group.sameCategory ? group.category : 'mixed'}
+                eventCount={group.events.length}
+                eventHandlers={
+                  single ? { click: () => onSelectEvent(group.events[0]) } : undefined
+                }
+              >
+                {!single && (
+                  <Popup minWidth={240} maxWidth={280} autoPanPadding={[24, 24]}>
+                    <StorePopup group={group} onSelectEvent={onSelectEvent} />
+                  </Popup>
+                )}
+              </Marker>
+            )
+          })}
         </MarkerClusterGroup>
       </MapContainer>
     </div>
