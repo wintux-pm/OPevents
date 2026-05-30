@@ -142,18 +142,34 @@ function StorePopup({ group, onSelectEvent }) {
   )
 }
 
+// Keeps the map in sync with its container. On mobile the map is mounted inside
+// a hidden panel (list view), so Leaflet first measures a 0x0 box and renders
+// only a strip of tiles. A ResizeObserver lets us call invalidateSize() the
+// moment the panel becomes visible, and defer the initial fitBounds until the
+// map actually has a size — otherwise the fit is computed against 0x0.
 function MapBounds({ groups }) {
   const map = useMap()
   const didFit = useRef(false)
 
-  useEffect(() => {
+  const fitToGroups = useCallback(() => {
     if (didFit.current || groups.length === 0) return
+    const { x, y } = map.getSize()
+    if (x === 0 || y === 0) return // container not visible yet
     const points = groups.map((g) => [g.lat, g.lng])
-    if (points.length > 0) {
-      map.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 13 })
-      didFit.current = true
-    }
+    map.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 13 })
+    didFit.current = true
   }, [groups, map])
+
+  useEffect(() => {
+    fitToGroups()
+    const container = map.getContainer()
+    const ro = new ResizeObserver(() => {
+      map.invalidateSize()
+      fitToGroups()
+    })
+    ro.observe(container)
+    return () => ro.disconnect()
+  }, [map, fitToGroups])
 
   return null
 }
