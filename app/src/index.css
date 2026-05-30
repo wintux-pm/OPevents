@@ -85,9 +85,23 @@ body {
   z-index: 1;
 }
 
+/* ===== Store popup (One Piece "wanted poster" theme) ===== */
 .leaflet-popup-content-wrapper {
+  background: linear-gradient(135deg, #fbf3df 0%, #f3e4c1 100%) !important;
+  border: 2px solid #a9772a !important;
   border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+  box-shadow: 0 6px 24px rgba(42, 32, 20, 0.35) !important;
+}
+
+.leaflet-popup-tip {
+  background: #f3e4c1 !important;
+  border: 2px solid #a9772a !important;
+}
+
+.leaflet-popup-close-button {
+  color: #6b5a3c !important;
+  font-size: 20px !important;
+  padding: 6px 8px !important;
 }
 
 .leaflet-popup-content {
@@ -99,26 +113,30 @@ body {
 .store-popup-header {
   padding-bottom: 8px;
   margin-bottom: 8px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px dashed rgba(169, 119, 42, 0.45);
 }
 
 .store-popup-name {
   display: block;
-  font-size: 0.95rem;
-  color: #1d3557;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #2a2014;
   line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .store-popup-meta {
   display: block;
-  margin-top: 2px;
+  margin-top: 3px;
   font-size: 0.78rem;
-  color: #6b7280;
+  font-weight: 500;
+  color: #6b5a3c;
 }
 
 .store-popup-dot {
   margin: 0 5px;
-  color: #c0c4cc;
+  color: rgba(169, 119, 42, 0.55);
 }
 
 .store-popup-list {
@@ -136,28 +154,30 @@ body {
 .store-popup-event {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   width: 100%;
-  padding: 7px 9px;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
+  padding: 8px 10px;
+  background: rgba(251, 243, 223, 0.7);
+  border: 1px solid rgba(169, 119, 42, 0.3);
+  border-radius: 9px;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
 }
 
 .store-popup-event:hover {
-  background: #fff5f5;
-  border-color: #ffc9c9;
+  background: rgba(251, 243, 223, 0.98);
+  border-color: rgba(192, 57, 43, 0.5);
+  transform: translateY(-1px);
 }
 
 .store-popup-event-dot {
   flex-shrink: 0;
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(251, 243, 223, 0.9);
 }
 
 .store-popup-event-info {
@@ -170,22 +190,23 @@ body {
 
 .store-popup-event-cat {
   font-size: 0.82rem;
-  font-weight: 600;
-  color: #1d3557;
+  font-weight: 700;
+  color: #2a2014;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .store-popup-event-date {
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: 0.74rem;
+  color: #6b5a3c;
 }
 
 .store-popup-event-arrow {
   flex-shrink: 0;
-  color: #c0c4cc;
-  font-size: 1.1rem;
+  color: #c0392b;
+  font-size: 1.15rem;
+  font-weight: 700;
   line-height: 1;
 }
 
