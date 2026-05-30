@@ -139,8 +139,9 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
 
   const cat = categoryConfig[event.category] || categoryConfig.storeTournament
 
+  // No documented price (fee missing or 0) → leave empty instead of "N/A".
   const bounty = !event.hasFee || event.isFree
-    ? t('priceNA')
+    ? ''
     : `${event.fee.toFixed(0)}${event.feeCurrency === 'EUR' ? '€' : event.feeCurrency}`
 
   return (
@@ -234,9 +235,11 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
               <span className="text-[10px] font-black uppercase tracking-[0.22em] text-op-ink">
                 Dead or Alive
               </span>
-              <span className="text-xl font-black text-op-ink tracking-wide whitespace-nowrap">
-                <span className="text-op-bronze mr-1">฿</span>{bounty}
-              </span>
+              {bounty && (
+                <span className="text-xl font-black text-op-ink tracking-wide whitespace-nowrap">
+                  <span className="text-op-bronze mr-1">฿</span>{bounty}
+                </span>
+              )}
               <span className="h-px flex-1 max-w-[28px] bg-op-bronze/50" />
             </div>
           </div>
@@ -264,7 +267,7 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
                 className={`text-[13px] font-bold mt-1 ${!event.hasFee || event.isFree ? 'text-op-ink-soft' : 'text-op-ink'}`}
               >
                 {!event.hasFee || event.isFree
-                  ? t('priceNA')
+                  ? ''
                   : `${event.fee.toFixed(0)}${event.feeCurrency === 'EUR' ? '€' : event.feeCurrency}`}
               </div>
             </div>

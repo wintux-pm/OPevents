@@ -90,7 +90,7 @@ function EventCard({ event, onClick, isSelected }) {
                 }`}
               >
                 {!event.hasFee || event.isFree
-                  ? t('priceNA')
+                  ? ''
                   : `${event.fee.toFixed(0)}${event.feeCurrency === 'EUR' ? '€' : event.feeCurrency}`}
               </div>
             </div>
