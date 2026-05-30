@@ -1,4 +1,16 @@
 import { useState, useEffect, useMemo } from 'react'
+import { decryptData } from '../utils/crypto'
+
+// In production builds the data files are encrypted (".json.enc"); in dev they
+// are served as plain JSON. Fetch accordingly and return the parsed object.
+async function loadDataFile(file) {
+  const res = await fetch(`/data/${file}`)
+  if (!res.ok) throw new Error(`Failed to load ${file}`)
+  if (file.endsWith('.enc')) {
+    return decryptData(await res.arrayBuffer())
+  }
+  return res.json()
+}
 
 function classifyEvent(title) {
   const t = title.toLowerCase()
@@ -98,14 +110,7 @@ export function useEvents() {
     async function load() {
       try {
         const files = await fetch('/data/manifest.json').then((r) => r.json())
-        const results = await Promise.allSettled(
-          files.map((file) =>
-            fetch(`/data/${file}`).then((r) => {
-              if (!r.ok) throw new Error(`Failed to load ${file}`)
-              return r.json()
-            }),
-          ),
-        )
+        const results = await Promise.allSettled(files.map(loadDataFile))
 
         const uniqueMap = new Map()
         for (const result of results) {
