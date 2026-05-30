@@ -79,6 +79,26 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
   const [dragging, setDragging] = useState(false)
   const dragStart = useRef(null)
 
+  // Show a hint at the bottom of the scroll area whenever there is more content
+  // below the fold, so it is obvious the panel can be scrolled.
+  const scrollRef = useRef(null)
+  const [canScrollDown, setCanScrollDown] = useState(false)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const update = () => {
+      setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 4)
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      el.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [event])
+
   useEffect(() => {
     const handler = (e) => {
       if (e.key === 'Escape') onCloseRef.current()
@@ -155,16 +175,17 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
             <div className="w-10 h-1.5 rounded-full bg-op-bronze/50" />
           </div>
 
-          {/* Wanted-poster header */}
+          {/* Wanted-poster header — portrait + identity side by side to save
+              vertical space so the details below need less scrolling */}
           <div
-            className="relative px-6 pt-2 lg:pt-4 pb-4 text-center shrink-0"
+            className="relative px-5 pt-1.5 lg:pt-3 pb-3 shrink-0"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-op-parchment-dark/70 hover:bg-op-parchment-dark border border-op-bronze/40 flex items-center justify-center transition-colors text-op-ink z-20"
+              className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-op-parchment-dark/70 hover:bg-op-parchment-dark border border-op-bronze/40 flex items-center justify-center transition-colors text-op-ink z-20"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -172,49 +193,51 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
             </button>
 
             {/* WANTED */}
-            <div className="flex items-center justify-center gap-2.5 mb-3">
-              <span className="h-0.5 flex-1 max-w-[40px] bg-op-ink/70" />
-              <h2 className="text-3xl font-black uppercase tracking-[0.18em] text-op-ink leading-none">
+            <div className="flex items-center justify-center gap-2.5 mb-2.5">
+              <span className="h-0.5 flex-1 max-w-[32px] bg-op-ink/70" />
+              <h2 className="text-2xl font-black uppercase tracking-[0.18em] text-op-ink leading-none">
                 Wanted
               </h2>
-              <span className="h-0.5 flex-1 max-w-[40px] bg-op-ink/70" />
+              <span className="h-0.5 flex-1 max-w-[32px] bg-op-ink/70" />
             </div>
 
-            {/* Portrait frame */}
-            <div
-              className="mx-auto w-28 h-28 rounded-md border-[3px] border-op-ink/80 flex items-center justify-center text-6xl shadow-[inset_0_0_18px_rgba(42,32,20,0.25)]"
-              style={{ background: cat.color + '26' }}
-            >
-              {cat.icon}
+            <div className="flex items-center gap-3.5">
+              {/* Portrait frame */}
+              <div
+                className="shrink-0 w-20 h-20 rounded-md border-[3px] border-op-ink/80 flex items-center justify-center text-4xl shadow-[inset_0_0_18px_rgba(42,32,20,0.25)]"
+                style={{ background: cat.color + '26' }}
+              >
+                {cat.icon}
+              </div>
+
+              {/* Identity */}
+              <div className="min-w-0 flex-1">
+                <span
+                  className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded mb-1"
+                  style={{ color: cat.color, backgroundColor: cat.color + '1f' }}
+                >
+                  {t(cat.label)}
+                </span>
+                <h3 className="font-black text-lg text-op-ink uppercase leading-tight">
+                  {event.store.name}
+                </h3>
+                <p className="text-[13px] text-op-ink-soft mt-0.5 truncate">
+                  {countryFlag(event.store.countryCode)} {event.store.city},{' '}
+                  {countryName(event.store.countryCode, lang)}
+                </p>
+              </div>
             </div>
 
-            {/* DEAD OR ALIVE */}
-            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-op-ink mt-3 mb-2">
-              Dead or Alive
-            </p>
-
-            <span
-              className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded mb-1.5"
-              style={{ color: cat.color, backgroundColor: cat.color + '1f' }}
-            >
-              {t(cat.label)}
-            </span>
-
-            <h3 className="font-black text-xl text-op-ink uppercase leading-tight px-4">
-              {event.store.name}
-            </h3>
-            <p className="text-sm text-op-ink-soft mt-0.5">
-              {countryFlag(event.store.countryCode)} {event.store.city},{' '}
-              {countryName(event.store.countryCode, lang)}
-            </p>
-
-            {/* Bounty */}
+            {/* DEAD OR ALIVE + bounty */}
             <div className="flex items-center justify-center gap-2.5 mt-3">
-              <span className="h-px w-8 bg-op-bronze/50" />
-              <span className="text-2xl font-black text-op-ink tracking-wide whitespace-nowrap">
+              <span className="h-px flex-1 max-w-[28px] bg-op-bronze/50" />
+              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-op-ink">
+                Dead or Alive
+              </span>
+              <span className="text-xl font-black text-op-ink tracking-wide whitespace-nowrap">
                 <span className="text-op-bronze mr-1">฿</span>{bounty}
               </span>
-              <span className="h-px w-8 bg-op-bronze/50" />
+              <span className="h-px flex-1 max-w-[28px] bg-op-bronze/50" />
             </div>
           </div>
 
@@ -264,7 +287,8 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
           </div>
 
           {/* Scrollable content */}
-          <div className="overflow-y-auto flex-1 scrollbar-thin">
+          <div className="relative flex-1 min-h-0 flex flex-col">
+          <div ref={scrollRef} className="overflow-y-auto flex-1 scrollbar-poster">
             {event.excerpt && (
               <div className="px-5 py-3 border-b border-op-bronze/25">
                 <div className="text-[10px] text-op-ink-soft font-medium uppercase tracking-wider mb-1">
@@ -329,6 +353,18 @@ export default function EventDetail({ event, onClose, onFilterStore, isStoreFilt
                 />
               )}
             </div>
+          </div>
+
+          {/* Scroll hint — fades in only when there is more content below */}
+          <div
+            className={`pointer-events-none absolute inset-x-0 bottom-0 h-12 flex items-end justify-center pb-1 bg-gradient-to-t from-op-parchment-light via-op-parchment-light/70 to-transparent transition-opacity duration-200 ${
+              canScrollDown ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <svg className="w-5 h-5 text-op-bronze animate-scroll-bob" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
           </div>
 
           {/* CTA */}

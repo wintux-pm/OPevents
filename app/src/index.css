@@ -290,6 +290,25 @@ body {
 .scrollbar-thin::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 3px; }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 
+/* Parchment-toned scrollbar for the wanted-poster detail panel */
+.scrollbar-poster {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(169, 119, 42, 0.55) transparent;
+}
+.scrollbar-poster::-webkit-scrollbar { width: 6px; }
+.scrollbar-poster::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-poster::-webkit-scrollbar-thumb {
+  background: rgba(169, 119, 42, 0.55);
+  border-radius: 3px;
+}
+.scrollbar-poster::-webkit-scrollbar-thumb:hover { background: rgba(169, 119, 42, 0.8); }
+
+@keyframes scroll-bob {
+  0%, 100% { transform: translateY(0); opacity: 0.65; }
+  50% { transform: translateY(4px); opacity: 1; }
+}
+.animate-scroll-bob { animation: scroll-bob 1.4s ease-in-out infinite; }
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
