@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import StrawHat from './StrawHat'
-import { countryFlag, countryName } from '../utils/country'
+import CountrySelect from './CountrySelect'
 
 export default function LandingPage({ events, cities, categories, countries, onEnter }) {
   const { t, lang, toggleLang } = useI18n()
@@ -32,7 +32,7 @@ export default function LandingPage({ events, cities, categories, countries, onE
     'w-full px-4 py-3 rounded-xl bg-op-parchment border-2 border-op-bronze/40 text-op-ink text-sm appearance-none cursor-pointer focus:outline-none focus:border-op-red focus:ring-1 focus:ring-op-red/30'
 
   return (
-    <div className="min-h-dvh op-paper flex flex-col items-center justify-center p-6 relative overflow-x-hidden">
+    <div className="min-h-dvh op-paper flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-x-hidden">
       {/* Nautical chart grid */}
       <div
         className="absolute inset-0 op-chart-grid pointer-events-none"
@@ -72,7 +72,7 @@ export default function LandingPage({ events, cities, categories, countries, onE
       </button>
 
       {/* WANTED poster */}
-      <div className="relative z-10 w-full max-w-md op-poster rounded-2xl px-7 pt-10 pb-7 text-center">
+      <div className="relative z-10 w-full max-w-md op-poster rounded-2xl px-5 sm:px-7 pt-9 sm:pt-10 pb-6 sm:pb-7 text-center">
         {/* Straw Hat emblem, overlapping the top edge */}
         <div className="op-float absolute -top-9 left-1/2 -translate-x-1/2 w-[72px] h-[72px]">
           <div className="absolute inset-0 rounded-full bg-op-gold/30 blur-xl" />
@@ -84,40 +84,30 @@ export default function LandingPage({ events, cities, categories, countries, onE
         <p className="text-[11px] font-bold tracking-[0.4em] uppercase text-op-bronze mt-3 mb-1">
           ⚓ One Piece Card Game ⚓
         </p>
-        <h1 className="text-4xl font-black text-op-ink uppercase tracking-tight leading-none mb-3">
+        <h1 className="text-3xl sm:text-4xl font-black text-op-ink uppercase tracking-tight leading-none mb-2 sm:mb-3">
           {t('landingTitle')}
         </h1>
 
         {/* Flourish divider */}
-        <div className="flex items-center justify-center gap-3 mb-3">
+        <div className="flex items-center justify-center gap-3 mb-2 sm:mb-3">
           <span className="h-px w-16 bg-gradient-to-r from-transparent to-op-bronze/60" />
           <span className="text-op-bronze op-bob">☠</span>
           <span className="h-px w-16 bg-gradient-to-l from-transparent to-op-bronze/60" />
         </div>
 
-        <p className="text-op-ink-soft text-sm mb-6">{t('landingSubtitle')}</p>
+        <p className="text-op-ink-soft text-[13px] sm:text-sm mb-4 sm:mb-6">{t('landingSubtitle')}</p>
 
         {/* Filters */}
-        <div className="space-y-3 mb-6 text-left">
+        <div className="space-y-2.5 mb-4 sm:mb-6 text-left">
           {countries.length > 0 && (
-            <div className="flex flex-wrap gap-2 justify-center">
-              {countries.map((c) => {
-                const active = country === c
-                return (
-                  <button
-                    key={c}
-                    onClick={() => { setCountry(active ? '' : c); setCity('') }}
-                    className={`py-2 px-3 rounded-xl text-[13px] font-bold border-2 transition-all ${
-                      active
-                        ? 'bg-op-red text-white border-op-gold/70 shadow-md'
-                        : 'bg-op-parchment text-op-ink border-op-bronze/40 hover:border-op-bronze/70'
-                    }`}
-                  >
-                    {countryFlag(c)} {countryName(c, lang)}
-                  </button>
-                )
-              })}
-            </div>
+            <CountrySelect
+              value={country}
+              onChange={(c) => { setCountry(c); setCity('') }}
+              countries={countries}
+              placeholder={t('selectCountry')}
+              allLabel={t('allCountries')}
+              lang={lang}
+            />
           )}
 
           {filteredCities.length > 0 && (
